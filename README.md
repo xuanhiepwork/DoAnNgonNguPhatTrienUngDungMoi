@@ -44,3 +44,11 @@ my-backend-api/
 ├── package.json
 └── server.js            # File gốc: Khởi tạo Express app, middleware (express.json, cors) và lắng nghe Port
 
+# Xóa toàn bộ file khỏi bộ nhớ đệm của Git
+git rm -r --cached .
+
+# Đảm bảo bạn đang ở nhánh main
+git checkout main
+
+# Ép Git ghi đè (force push) lên nhánh main trên Github để xóa các file rác cũ
+git push -f origin main
