@@ -52,3 +52,6 @@ git checkout main
 
 # Ép Git ghi đè (force push) lên nhánh main trên Github để xóa các file rác cũ
 git push -f origin main
+
+# Tạo và chuyển ngay sang nhánh dev mới
+git checkout -b dev
