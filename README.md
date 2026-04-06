@@ -1,4 +1,4 @@
-Cấu trúc dự án:
+# Cấu trúc dự án:
 
 my-react-app/
 ├── public/              # Chứa các file tĩnh (index.html, favicon.ico, hình ảnh tĩnh)
@@ -20,6 +20,12 @@ my-react-app/
 ├── .env                 # Biến môi trường của React (VITE_API_URL...)
 ├── package.json
 └── vite.config.js       # Cấu hình Vite (nếu bạn dùng Vite để khởi tạo React)
+
+# RUN 
+```bash
+npm run dev
+```
+
 
 my-backend-api/
 ├── src/
@@ -44,14 +50,33 @@ my-backend-api/
 ├── package.json
 └── server.js            # File gốc: Khởi tạo Express app, middleware (express.json, cors) và lắng nghe Port
 
+
+# RUN 
+```bash
+node server.js
+```
+
+
 # Xóa toàn bộ file khỏi bộ nhớ đệm của Git
+```bash
 git rm -r --cached .
+```
 
 # Đảm bảo bạn đang ở nhánh main
+```bash
 git checkout main
+```
 
 # Ép Git ghi đè (force push) lên nhánh main trên Github để xóa các file rác cũ
+```bash
 git push -f origin main
+```
 
 # Tạo và chuyển ngay sang nhánh dev mới
+```bash
 git checkout -b dev
+```
+
+# ADMIN
+admin1
+456

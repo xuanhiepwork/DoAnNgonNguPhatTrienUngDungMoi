@@ -1,9 +1,7 @@
 const { pool } = require('../config/db');
 
-// Lấy danh sách (Có phân trang, tìm kiếm, sắp xếp)
 exports.getAllProducts = async (req, res) => {
     try {
-        // Lấy query từ URL, gán giá trị mặc định nếu không có
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const search = req.query.search || '';
@@ -16,22 +14,22 @@ exports.getAllProducts = async (req, res) => {
         let query = `SELECT * FROM product WHERE is_deleted = FALSE`;
         const queryParams = [];
 
-        // Thêm logic tìm kiếm theo Title
+        // tìm kiếm theo Title
         if (search) {
             query += ` AND title LIKE ?`;
             queryParams.push(`%${search}%`);
         }
 
-        // Thêm logic sắp xếp (Tránh SQL Injection bằng cách kiểm tra cột hợp lệ)
+        // sắp xếp 
         const allowedSortColumns = ['id', 'title', 'price'];
         const safeSortBy = allowedSortColumns.includes(sortBy) ? sortBy : 'id';
         query += ` ORDER BY ${safeSortBy} ${sortOrder}`;
 
-        // Thêm logic phân trang
+        // phân trang
         query += ` LIMIT ? OFFSET ?`;
         queryParams.push(limit, offset);
 
-        // Đếm tổng số bản ghi để Frontend làm thanh chuyển trang
+        // Đếm tổng số bản ghi để làm thanh chuyển trang
         let countQuery = `SELECT COUNT(*) as total FROM product WHERE is_deleted = FALSE`;
         const countParams = [];
         if (search) {
@@ -58,7 +56,6 @@ exports.getAllProducts = async (req, res) => {
     }
 };
 
-// Lấy chi tiết 1 Product theo ID
 exports.getProductById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -73,7 +70,6 @@ exports.getProductById = async (req, res) => {
     }
 };
 
-// Tạo mới Product
 exports.createProduct = async (req, res) => {
     try {
         const { title, description, price } = req.body;
@@ -87,7 +83,6 @@ exports.createProduct = async (req, res) => {
     }
 };
 
-// Cập nhật Product
 exports.updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
@@ -106,7 +101,6 @@ exports.updateProduct = async (req, res) => {
     }
 };
 
-// Xóa mềm (Soft Delete)
 exports.deleteProduct = async (req, res) => {
     try {
         const { id } = req.params;

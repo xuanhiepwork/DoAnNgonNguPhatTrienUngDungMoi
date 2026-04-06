@@ -9,8 +9,8 @@ router.post('/', productController.createProduct);
 router.put('/:id', productController.updateProduct);
 router.delete('/:id', productController.deleteProduct);
 
-router.get('/', productController.getAllProducts);
+// router.get('/', productController.getAllProducts);
 router.post('/', verifyToken, checkRole(['admin', 'mod']), productController.createProduct);
-router.delete('/:id', verifyToken, checkRole(['admin']), productController.deleteProduct);
+// router.delete('/:id', verifyToken, checkRole(['admin']), productController.deleteProduct);
 
 module.exports = router;

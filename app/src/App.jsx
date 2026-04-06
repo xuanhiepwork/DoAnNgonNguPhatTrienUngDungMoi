@@ -3,7 +3,11 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 
-// Hàm kiểm tra xem đã đăng nhập chưa
+import ProductManagement from './pages/ProductManagement';
+import EmployeeManagement from './pages/EmployeeManagement';
+import Register from './pages/Register';
+import LeaveManagement from './pages/LeaveManagement';
+
 const ProtectedRoute = ({ children }) => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -16,19 +20,19 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
-                {/* Trang Public */}
                 <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
 
-                {/* Trang cần bảo vệ (Yêu cầu đăng nhập) */}
                 <Route path="/" element={
                     <ProtectedRoute>
                         <Dashboard />
                     </ProtectedRoute>
                 }>
-                    {/* Các route con sẽ render vào thẻ <Outlet /> trong Dashboard */}
                     <Route index element={<h2>Chào mừng đến với Hệ thống Quản lý</h2>} />
-                    <Route path="products" element={<h2>Giao diện Quản lý Thiết bị (Sẽ code tiếp)</h2>} />
-                    <Route path="employees" element={<h2>Giao diện Quản lý Nhân viên (Sẽ code tiếp)</h2>} />
+
+                    <Route path="products" element={<ProductManagement />} />
+                    <Route path="employees" element={<EmployeeManagement />} />
+                    <Route path="leave-management" element={<LeaveManagement />} />
                 </Route>
             </Routes>
         </BrowserRouter>

@@ -8,20 +8,25 @@ exports.getAllEmployees = async (req, res) => {
             LEFT JOIN department d ON e.department_id = d.id
             LEFT JOIN position p ON e.position_id = p.id
             WHERE e.is_deleted = FALSE
+            ORDER BY e.id DESC
         `);
         res.status(200).json(rows);
-    } catch (error) { res.status(500).json({ error: error.message }); }
+    } catch (error) {
+        res.status(500).json({ message: "Lỗi SQL", error: error.message });
+    }
 };
 
 exports.createEmployee = async (req, res) => {
     try {
-        const { full_name, dob, hometown, department_id, position_id } = req.body;
+        const { full_name, hometown, department_id, position_id } = req.body;
         const avatar = req.file ? `/uploads/${req.file.filename}` : null;
 
         await pool.query(
-            'INSERT INTO employee (full_name, dob, hometown, avatar, department_id, position_id) VALUES (?, ?, ?, ?, ?, ?)',
-            [full_name, dob, hometown, avatar, department_id, position_id]
+            'INSERT INTO employee (full_name, hometown, avatar, department_id, position_id) VALUES (?, ?, ?, ?, ?)',
+            [full_name, hometown, avatar, department_id, position_id]
         );
         res.status(201).json({ message: "Thêm nhân viên thành công" });
-    } catch (error) { res.status(500).json({ error: error.message }); }
+    } catch (error) {
+        res.status(500).json({ message: "Lỗi server", error: error.message });
+    }
 };
