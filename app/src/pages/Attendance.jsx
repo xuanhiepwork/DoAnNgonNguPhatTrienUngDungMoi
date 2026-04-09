@@ -5,18 +5,21 @@ import axiosClient from '../api/axiosClient';
 
 const { Title } = Typography;
 
+// Hàm giải mã Token an toàn
+const decodeToken = (token) => {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        return JSON.parse(decodeURIComponent(window.atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
+    } catch (e) { return {}; }
+};
+
 const Attendance = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const token = localStorage.getItem('token');
-    let user = {};
-
-    try {
-        user = token ? JSON.parse(atob(token.split('.')[1])) : {};
-    } catch (error) {
-        console.error('Token khong hop le', error);
-    }
+    const user = token ? decodeToken(token) : {};
 
     const fetchAttendance = async () => {
         setLoading(true);

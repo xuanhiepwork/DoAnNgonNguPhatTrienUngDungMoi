@@ -3,6 +3,15 @@ import { Table, Button, Card, Avatar, Tag, Space, message, Modal, Form, Input, S
 import { UserAddOutlined, UploadOutlined, TeamOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import axiosClient from '../api/axiosClient';
 
+// Hàm giải mã Token an toàn
+const decodeToken = (token) => {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        return JSON.parse(decodeURIComponent(window.atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
+    } catch (e) { return { role: 'user' }; }
+};
+
 const EmployeeManagement = () => {
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -10,15 +19,7 @@ const EmployeeManagement = () => {
     const [form] = Form.useForm();
 
     const token = localStorage.getItem('token');
-    let user = { role: 'user' };
-
-    try {
-        if (token) {
-            user = JSON.parse(atob(token.split('.')[1]));
-        }
-    } catch (error) {
-        console.error('Token khong hop le', error);
-    }
+    const user = token ? decodeToken(token) : { role: 'user' };
 
     const fetchEmployees = async () => {
         setLoading(true);
@@ -113,11 +114,19 @@ const EmployeeManagement = () => {
                         <Input placeholder="Nguyen Van A" />
                     </Form.Item>
                     <Space size="large">
-                        <Form.Item name="department_id" label="Phong ban" rules={[{ required: true }]} style={{ width: 200 }}>
-                            <Select placeholder="Chon phong" options={[{ value: 1, label: 'Ky thuat' }, { value: 2, label: 'Nhan su' }, { value: 3, label: 'Kinh doanh' }]} />
+                        <Form.Item name="department_id" label="Phong ban" rules={[{ required: true, message: 'Vui lòng chọn phòng ban' }]} style={{ width: 200 }}>
+                            <Select allowClear placeholder="Chon phong" options={[
+                                { value: 1, label: 'Ky thuat' },
+                                { value: 2, label: 'Nhan su' },
+                                { value: 3, label: 'Kinh doanh' }
+                            ]} />
                         </Form.Item>
-                        <Form.Item name="position_id" label="Chuc vu" rules={[{ required: true }]} style={{ width: 200 }}>
-                            <Select placeholder="Chon chuc vu" options={[{ value: 1, label: 'Truong phong' }, { value: 2, label: 'Nhan vien' }, { value: 3, label: 'Thuc tap sinh' }]} />
+                        <Form.Item name="position_id" label="Chuc vu" rules={[{ required: true, message: 'Vui lòng chọn chức vụ' }]} style={{ width: 200 }}>
+                            <Select allowClear placeholder="Chon chuc vu" options={[
+                                { value: 1, label: 'Truong phong' },
+                                { value: 2, label: 'Nhan vien' },
+                                { value: 3, label: 'Thuc tap sinh' }
+                            ]} />
                         </Form.Item>
                     </Space>
                     <Form.Item name="hometown" label="Que quan">

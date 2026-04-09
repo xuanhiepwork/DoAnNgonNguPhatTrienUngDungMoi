@@ -35,6 +35,7 @@ app.use(express.json());
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/uploads', express.static('uploads'))
+app.use('/api/dashboard', require('./src/routes/dashboard'));
 app.use('/api/employees', employeeRoutes);
 app.use('/api/payroll', payrollRoutes);
 app.use('/api/attendance', require('./src/routes/attendance'));

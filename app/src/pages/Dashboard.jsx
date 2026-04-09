@@ -1,12 +1,24 @@
-import React from 'react';
-import { Layout, Menu, Button } from 'antd';
-import { useNavigate, Outlet, Link } from 'react-router-dom';
-import { DesktopOutlined, TeamOutlined, LogoutOutlined, FormOutlined, BellOutlined, DollarOutlined, FieldTimeOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { Layout, Menu, Button, Card, Row, Col, Statistic } from 'antd';
+import { useNavigate, Outlet, Link, useLocation } from 'react-router-dom';
+import { DesktopOutlined, TeamOutlined, LogoutOutlined, FormOutlined, BellOutlined, DollarOutlined, FieldTimeOutlined, BankOutlined, WalletOutlined } from '@ant-design/icons';
+import axiosClient from '../api/axiosClient';
 
 const { Header, Content, Sider } = Layout;
 
+// Hàm giải mã Token an toàn
+const decodeToken = (token) => {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        return JSON.parse(decodeURIComponent(window.atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
+    } catch (e) { return null; }
+};
+
 const Dashboard = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const [stats, setStats] = useState({ workingDays: 0, pendingLeaves: 0, latestSalary: 0 });
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -14,55 +26,67 @@ const Dashboard = () => {
     };
 
     const token = localStorage.getItem('token');
-    let user = { role: 'user' };
-    try {
-        if (token) user = JSON.parse(atob(token.split('.')[1]));
-    } catch (e) {
-        console.error("Lỗi token");
-    }
+    const user = token ? decodeToken(token) : { role: 'user' };
+
+    useEffect(() => {
+        if (user?.role === 'user' && location.pathname === '/') {
+            axiosClient.get('/dashboard/my-stats')
+                .then(res => setStats(res))
+                .catch(e => console.log("Lỗi tải thông kê"));
+        }
+    }, [location.pathname]);
 
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Sider theme="dark">
-                <div style={{ height: 32, margin: 16, background: 'rgba(255, 255, 255, 0.2)', color: 'white', textAlign: 'center', lineHeight: '32px', fontWeight: 'bold' }}>
-                    HRM SYSTEM
-                </div>
+                <div style={{ height: 32, margin: 16, background: 'rgba(255, 255, 255, 0.2)', color: 'white', textAlign: 'center', lineHeight: '32px', fontWeight: 'bold' }}>HRM SYSTEM</div>
                 <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-                    <Menu.Item key="1" icon={<DesktopOutlined />}>
-                        <Link to="/products">Tài sản / Thiết bị</Link>
-                    </Menu.Item>
-                    <Menu.Item key="2" icon={<TeamOutlined />}>
-                        <Link to="/employees">Nhân sự</Link>
-                    </Menu.Item>
-                    <Menu.Item key="6" icon={<FieldTimeOutlined />}>
-                        <Link to="/attendance">Chấm công</Link>
-                    </Menu.Item>
-                    <Menu.Item key="3" icon={<FormOutlined />}>
-                        <Link to="/leave-request">Xin nghỉ phép</Link>
-                    </Menu.Item>
-
-                    {user.role === 'admin' && (
-                        <Menu.Item key="4" icon={<BellOutlined />}>
-                            <Link to="/leave-management">Duyệt nghỉ phép</Link>
-                        </Menu.Item>
-                    )}
-
-                    {user.role === 'admin' && (
-                        <Menu.Item key="5" icon={<DollarOutlined />}>
-                            <Link to="/payroll">Thanh toán lương</Link>
-                        </Menu.Item>
-                    )}
+                    <Menu.Item key="home" icon={<BankOutlined />}><Link to="/">Trang chủ</Link></Menu.Item>
+                    <Menu.Item key="1" icon={<DesktopOutlined />}><Link to="/products">Tài sản / Thiết bị</Link></Menu.Item>
+                    <Menu.Item key="2" icon={<TeamOutlined />}><Link to="/employees">Nhân sự</Link></Menu.Item>
+                    <Menu.Item key="6" icon={<FieldTimeOutlined />}><Link to="/attendance">Chấm công</Link></Menu.Item>
+                    <Menu.Item key="3" icon={<FormOutlined />}><Link to="/leave-request">Xin nghỉ phép</Link></Menu.Item>
+                    {user?.role === 'admin' && <Menu.Item key="4" icon={<BellOutlined />}><Link to="/leave-management">Duyệt nghỉ phép</Link></Menu.Item>}
+                    {user?.role === 'admin' && <Menu.Item key="5" icon={<DollarOutlined />}><Link to="/payroll">Thanh toán lương</Link></Menu.Item>}
                 </Menu>
             </Sider>
             <Layout className="site-layout">
                 <Header style={{ padding: '0 16px', background: '#fff', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-                    <Button type="primary" danger icon={<LogoutOutlined />} onClick={handleLogout}>
-                        Đăng xuất
-                    </Button>
+                    <Button type="primary" danger icon={<LogoutOutlined />} onClick={handleLogout}>Đăng xuất</Button>
                 </Header>
                 <Content style={{ margin: '16px' }}>
                     <div style={{ padding: 24, minHeight: 360, background: '#fff' }}>
-                        <Outlet />
+                        {location.pathname === '/' ? (
+                            <div>
+                                <h2 style={{ marginBottom: 20 }}>Xin chào, {user?.username}!</h2>
+                                {user?.role === 'user' ? (
+                                    <Row gutter={16}>
+                                        <Col span={8}>
+                                            <Card bordered={false} style={{ background: '#e6f7ff' }}>
+                                                <Statistic title="Ngày công tháng này" value={stats.workingDays} suffix="/ 22" prefix={<FieldTimeOutlined />} />
+                                            </Card>
+                                        </Col>
+                                        <Col span={8}>
+                                            <Card bordered={false} style={{ background: '#f6ffed' }}>
+                                                <Statistic title="Đơn nghỉ phép chờ duyệt" value={stats.pendingLeaves} prefix={<FormOutlined />} />
+                                            </Card>
+                                        </Col>
+                                        <Col span={8}>
+                                            <Card bordered={false} style={{ background: '#fff7e6' }}>
+                                                <Statistic title="Lương thực nhận gần nhất" value={stats.latestSalary} suffix="VNĐ" prefix={<WalletOutlined />} />
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                ) : (
+                                    <div style={{ padding: 40, textAlign: 'center' }}>
+                                        <BankOutlined style={{ fontSize: 64, color: '#08c' }} />
+                                        <h3>Chào mừng Admin quay trở lại hệ thống quản trị!</h3>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <Outlet />
+                        )}
                     </div>
                 </Content>
             </Layout>

@@ -19,23 +19,23 @@ Dự án là một ứng dụng **Web Fullstack** hỗ trợ quản lý nhân s�
 
 ---
 
-## 🛠 2. CÔNG NGHỆ SỬ DỤNG
+## 2. CÔNG NGHỆ SỬ DỤNG
 
 ### Frontend
-![React]
-![Vite]
-![Ant-Design]
-![Socket.io]
+- React
+- Vite
+- Ant-Design
+- Socket.io
 
 ### Backend
-![NodeJS]
-![Express.js]
-![MySQL]
-![JWT]
+- NodeJS
+- Express.js
+- MySQL
+- JWT
 
 ---
 
-## 🏗 3. CÁC CÔNG VIỆC ĐÃ THỰC HIỆN
+## 3. CÁC CÔNG VIỆC ĐÃ THỰC HIỆN
 - [x] **Thiết kế Cơ sở dữ liệu:** Xây dựng cấu trúc DB tối ưu gồm 9 bảng với các ràng buộc quan hệ chặt chẽ.
 - [x] **Xây dựng API (RESTful):** Hoàn thiện hệ thống Endpoint xử lý nghiệp vụ CRUD và tính toán logic phức tạp.
 - [x] **Tích hợp Real-time:** Triển khai **Socket.io** để xử lý thông báo tức thời (Ting-ting) khi có sự kiện mới.

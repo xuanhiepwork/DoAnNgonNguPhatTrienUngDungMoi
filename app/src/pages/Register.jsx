@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Card, message, Typography } from 'antd';
-import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined, MailOutlined, IdcardOutlined } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
 import axiosClient from '../api/axiosClient';
 
@@ -13,7 +13,6 @@ const Register = () => {
     const onFinish = async (values) => {
         setLoading(true);
         try {
-            // await axiosClient.post('/users/register', { ...values, role_id: 1 });
             await axiosClient.post('/users/register', values);
             message.success('Đăng ký tài khoản thành công!');
             navigate('/login');
@@ -28,8 +27,12 @@ const Register = () => {
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f0f2f5' }}>
             <Card title="ĐĂNG KÝ TÀI KHOẢN MỚI" style={{ width: 400, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
                 <Form layout="vertical" onFinish={onFinish}>
+                    <Form.Item name="full_name" label="Họ và Tên" rules={[{ required: true, message: 'Vui lòng nhập họ tên!' }]}>
+                        <Input prefix={<IdcardOutlined />} placeholder="Ví dụ: Trần Xuân Hiệp" />
+                    </Form.Item>
+
                     <Form.Item name="username" label="Tên đăng nhập" rules={[{ required: true, message: 'Vui lòng nhập tên!' }]}>
-                        <Input prefix={<UserOutlined />} placeholder="Ví dụ: nva_work" />
+                        <Input prefix={<UserOutlined />} placeholder="Ví dụ: hiep_dev" />
                     </Form.Item>
 
                     <Form.Item name="email" label="Email" rules={[{ required: true, type: 'email', message: 'Email không hợp lệ!' }]}>

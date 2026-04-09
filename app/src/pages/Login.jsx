@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Card, message, Typography } from 'antd'; // Thêm Typography
+import { Form, Input, Button, Card, message, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { useNavigate, Link } from 'react-router-dom'; // Thêm Link vào đây
+import { Link } from 'react-router-dom';
 import axiosClient from '../api/axiosClient';
 
 const { Text } = Typography;
 
 const Login = () => {
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
 
     const onFinish = async (values) => {
         setLoading(true);
@@ -16,7 +15,8 @@ const Login = () => {
             const response = await axiosClient.post('/users/login', values);
             message.success('Đăng nhập thành công!');
             localStorage.setItem('token', response.token);
-            navigate('/');
+
+            window.location.href = '/';
         } catch (error) {
             message.error(error.response?.data?.message || 'Lỗi kết nối đến máy chủ');
         } finally {
