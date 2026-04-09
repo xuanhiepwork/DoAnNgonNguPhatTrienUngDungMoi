@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, Button, Card, Avatar, Tag, Space, message, Modal, Form, Input, Select, Upload } from 'antd';
 import { UserAddOutlined, UploadOutlined, TeamOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import axiosClient from '../api/axiosClient';
@@ -9,29 +9,32 @@ const EmployeeManagement = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [form] = Form.useForm();
 
-    // Kiểm tra token an toàn để tránh crash ứng dụng
     const token = localStorage.getItem('token');
-    let user = { role: 'user' }; // Mặc định là user nếu không có token
+    let user = { role: 'user' };
+
     try {
         if (token) {
             user = JSON.parse(atob(token.split('.')[1]));
         }
-    } catch (e) {
-        console.error("Token không hợp lệ");
+    } catch (error) {
+        console.error('Token khong hop le', error);
     }
 
     const fetchEmployees = async () => {
         setLoading(true);
         try {
             const data = await axiosClient.get('/employees');
-            setEmployees(data);
+            setEmployees(Array.isArray(data) ? data : []);
         } catch (error) {
-            message.error('Lỗi tải danh sách nhân sự');
+            message.error(error.response?.data?.message || 'Loi tai danh sach nhan su');
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
-    useEffect(() => { fetchEmployees(); }, []);
+    useEffect(() => {
+        fetchEmployees();
+    }, []);
 
     const onFinish = async (values) => {
         const formData = new FormData();
@@ -48,42 +51,44 @@ const EmployeeManagement = () => {
             await axiosClient.post('/employees', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
-            message.success('Thêm nhân viên thành công!');
+            message.success('Them nhan vien thanh cong');
             setIsModalOpen(false);
             form.resetFields();
             fetchEmployees();
         } catch (error) {
-            message.error('Thêm thất bại!');
+            message.error(error.response?.data?.message || 'Them that bai');
         }
     };
 
     const columns = [
         {
-            title: 'Ảnh thẻ',
+            title: 'Anh the',
             dataIndex: 'avatar',
             width: 100,
             render: (url) => {
-                const src = url && url.startsWith('http') ? url : `http://localhost:8080${url}`;
+                const src = url
+                    ? (url.startsWith('http') ? url : `http://localhost:8080${url}`)
+                    : undefined;
                 return <Avatar src={src} icon={<TeamOutlined />} size={60} style={{ border: '2px solid #1890ff' }} />;
             }
         },
         {
-            title: 'Họ và Tên',
+            title: 'Ho va Ten',
             dataIndex: 'full_name',
             render: (text) => <b style={{ color: '#1890ff' }}>{text}</b>
         },
         {
-            title: 'Phòng ban',
+            title: 'Phong ban',
             dataIndex: 'dept_name',
-            render: (dept) => <Tag color="geekblue">{dept || 'Chưa xếp'}</Tag>
+            render: (dept) => <Tag color="geekblue">{dept || 'Chua xep'}</Tag>
         },
         {
-            title: 'Chức vụ',
+            title: 'Chuc vu',
             dataIndex: 'pos_name',
-            render: (pos) => <Tag color="green">{pos || 'Nhân viên'}</Tag>
+            render: (pos) => <Tag color="green">{pos || 'Nhan vien'}</Tag>
         },
         {
-            title: 'Quê quán',
+            title: 'Que quan',
             dataIndex: 'hometown',
             render: (text) => <span><EnvironmentOutlined /> {text}</span>
         },
@@ -91,33 +96,36 @@ const EmployeeManagement = () => {
 
     return (
         <Card
-            title={<span><TeamOutlined /> QUẢN LÝ NHÂN SỰ CHUYÊN SÂU</span>}
-            // ĐÃ SỬA LỖI CÚ PHÁP Ở ĐÂY
+            title={<span><TeamOutlined /> QUAN LY NHAN SU</span>}
             extra={
                 user.role === 'admin' && (
                     <Button type="primary" icon={<UserAddOutlined />} onClick={() => setIsModalOpen(true)}>
-                        Thêm nhân viên
+                        Them nhan vien
                     </Button>
                 )
             }
         >
             <Table columns={columns} dataSource={employees} rowKey="id" loading={loading} bordered pagination={{ pageSize: 5 }} />
 
-            <Modal title="Hồ sơ nhân viên mới" open={isModalOpen} onCancel={() => setIsModalOpen(false)} onOk={() => form.submit()} okText="Lưu hồ sơ" cancelText="Đóng">
+            <Modal title="Ho so nhan vien moi" open={isModalOpen} onCancel={() => setIsModalOpen(false)} onOk={() => form.submit()} okText="Luu ho so" cancelText="Dong">
                 <Form form={form} layout="vertical" onFinish={onFinish}>
-                    <Form.Item name="full_name" label="Họ và Tên" rules={[{ required: true, message: 'Nhập tên nhân viên!' }]}><Input placeholder="Nguyễn Văn A" /></Form.Item>
+                    <Form.Item name="full_name" label="Ho va Ten" rules={[{ required: true, message: 'Nhap ten nhan vien' }]}>
+                        <Input placeholder="Nguyen Van A" />
+                    </Form.Item>
                     <Space size="large">
-                        <Form.Item name="department_id" label="Phòng ban" rules={[{ required: true }]} style={{ width: 200 }}>
-                            <Select placeholder="Chọn phòng" options={[{ value: 1, label: 'Kỹ thuật' }, { value: 2, label: 'Nhân sự' }, { value: 3, label: 'Kinh doanh' }]} />
+                        <Form.Item name="department_id" label="Phong ban" rules={[{ required: true }]} style={{ width: 200 }}>
+                            <Select placeholder="Chon phong" options={[{ value: 1, label: 'Ky thuat' }, { value: 2, label: 'Nhan su' }, { value: 3, label: 'Kinh doanh' }]} />
                         </Form.Item>
-                        <Form.Item name="position_id" label="Chức vụ" rules={[{ required: true }]} style={{ width: 200 }}>
-                            <Select placeholder="Chọn chức vụ" options={[{ value: 1, label: 'Trưởng phòng' }, { value: 2, label: 'Nhân viên' }, { value: 3, label: 'Thực tập sinh' }]} />
+                        <Form.Item name="position_id" label="Chuc vu" rules={[{ required: true }]} style={{ width: 200 }}>
+                            <Select placeholder="Chon chuc vu" options={[{ value: 1, label: 'Truong phong' }, { value: 2, label: 'Nhan vien' }, { value: 3, label: 'Thuc tap sinh' }]} />
                         </Form.Item>
                     </Space>
-                    <Form.Item name="hometown" label="Quê quán"><Input placeholder="Hà Nội, TP.HCM..." /></Form.Item>
-                    <Form.Item name="avatar" label="Ảnh thẻ nhân viên (Tỷ lệ 3x4)">
+                    <Form.Item name="hometown" label="Que quan">
+                        <Input placeholder="Ha Noi, TP.HCM..." />
+                    </Form.Item>
+                    <Form.Item name="avatar" label="Anh the nhan vien">
                         <Upload beforeUpload={() => false} listType="picture" maxCount={1}>
-                            <Button icon={<UploadOutlined />}>Chọn ảnh đại diện</Button>
+                            <Button icon={<UploadOutlined />}>Chon anh dai dien</Button>
                         </Upload>
                     </Form.Item>
                 </Form>

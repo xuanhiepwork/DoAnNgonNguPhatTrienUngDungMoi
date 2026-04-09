@@ -16,6 +16,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: { origin: "http://localhost:5173" }
 });
+const payrollRoutes = require('./src/routes/payroll');
 
 io.on('connection', (socket) => {
     console.log('Có người vừa kết nối Socket:', socket.id);
@@ -35,11 +36,9 @@ app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/uploads', express.static('uploads'))
 app.use('/api/employees', employeeRoutes);
+app.use('/api/payroll', payrollRoutes);
+app.use('/api/attendance', require('./src/routes/attendance'));
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server đang chạy tại http://localhost:${PORT}`);
 });
-
-// server.listen(PORT, () => {
-//     console.log(`Server đang chạy tại http://localhost:${PORT}`);
-// });

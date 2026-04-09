@@ -36,3 +36,5 @@ const LeaveRequest = () => {
         </Card>
     );
 };
+
+export default LeaveRequest;

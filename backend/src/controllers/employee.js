@@ -7,7 +7,7 @@ exports.getAllEmployees = async (req, res) => {
             FROM employee e
             LEFT JOIN department d ON e.department_id = d.id
             LEFT JOIN position p ON e.position_id = p.id
-            WHERE e.is_deleted = FALSE
+            WHERE e.is_deleted = 0
             ORDER BY e.id DESC
         `);
         res.status(200).json(rows);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout, Menu, Button } from 'antd';
-import { DesktopOutlined, TeamOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useNavigate, Outlet, Link } from 'react-router-dom';
+import { DesktopOutlined, TeamOutlined, LogoutOutlined, FormOutlined, BellOutlined, DollarOutlined, FieldTimeOutlined } from '@ant-design/icons';
 
 const { Header, Content, Sider } = Layout;
 
@@ -13,7 +13,13 @@ const Dashboard = () => {
         navigate('/login');
     };
 
-
+    const token = localStorage.getItem('token');
+    let user = { role: 'user' };
+    try {
+        if (token) user = JSON.parse(atob(token.split('.')[1]));
+    } catch (e) {
+        console.error("Lỗi token");
+    }
 
     return (
         <Layout style={{ minHeight: '100vh' }}>
@@ -28,6 +34,24 @@ const Dashboard = () => {
                     <Menu.Item key="2" icon={<TeamOutlined />}>
                         <Link to="/employees">Nhân sự</Link>
                     </Menu.Item>
+                    <Menu.Item key="6" icon={<FieldTimeOutlined />}>
+                        <Link to="/attendance">Chấm công</Link>
+                    </Menu.Item>
+                    <Menu.Item key="3" icon={<FormOutlined />}>
+                        <Link to="/leave-request">Xin nghỉ phép</Link>
+                    </Menu.Item>
+
+                    {user.role === 'admin' && (
+                        <Menu.Item key="4" icon={<BellOutlined />}>
+                            <Link to="/leave-management">Duyệt nghỉ phép</Link>
+                        </Menu.Item>
+                    )}
+
+                    {user.role === 'admin' && (
+                        <Menu.Item key="5" icon={<DollarOutlined />}>
+                            <Link to="/payroll">Thanh toán lương</Link>
+                        </Menu.Item>
+                    )}
                 </Menu>
             </Sider>
             <Layout className="site-layout">
@@ -38,7 +62,6 @@ const Dashboard = () => {
                 </Header>
                 <Content style={{ margin: '16px' }}>
                     <div style={{ padding: 24, minHeight: 360, background: '#fff' }}>
-                        {/* Nơi hiển thị các component con dựa theo Route */}
                         <Outlet />
                     </div>
                 </Content>

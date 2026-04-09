@@ -8,7 +8,12 @@ exports.createRequest = async (req, res) => {
             'INSERT INTO leave_request (employee_id, start_date, end_date, reason) VALUES (?, ?, ?, ?)',
             [employee_id, start_date, end_date, reason]
         );
-        res.status(201).json({ message: "Gửi đơn nghỉ phép thành công!" });
+
+        req.io.emit('new_leave_request', {
+            message: `Nhân viên ${full_name || 'Mới'} vừa gửi đơn nghỉ phép!`
+        });
+
+        res.status(201).json({ message: "Gửi đơn xin nghỉ phép thành công!" });
     } catch (error) { res.status(500).json({ error: error.message }); }
 };
 

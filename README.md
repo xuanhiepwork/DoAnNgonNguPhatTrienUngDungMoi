@@ -80,3 +80,14 @@ git checkout -b dev
 # ADMIN
 admin1
 456
+
+
+
+
+# Chức năng:
+Chấm công
+Nghỉ phép
+Tính lương
+
+Sử dụng docker, socker.io
+Lưu data trên S3 của AWS (hỏi Kiệt)

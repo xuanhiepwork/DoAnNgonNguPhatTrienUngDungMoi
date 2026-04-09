@@ -13,9 +13,10 @@ const Register = () => {
     const onFinish = async (values) => {
         setLoading(true);
         try {
-            await axiosClient.post('/users/register', { ...values, role_id: 1 });
+            // await axiosClient.post('/users/register', { ...values, role_id: 1 });
+            await axiosClient.post('/users/register', values);
             message.success('Đăng ký tài khoản thành công!');
-            navigate('/login'); // Đăng ký xong tự về trang Login
+            navigate('/login');
         } catch (error) {
             message.error(error.response?.data?.message || 'Tên tài khoản hoặc Email đã tồn tại');
         } finally {
