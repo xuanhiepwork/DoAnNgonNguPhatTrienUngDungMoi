@@ -79,4 +79,4 @@ Dự án là một ứng dụng **Web Fullstack** hỗ trợ quản lý nhân s�
 ---
 
 Lần cập nhật cuối: 09/04/2026
-Đồ án được thực hiện bởi Trần Xuân Hiệp - MSSV: 2280618989
+Đồ án được thực hiện bởi Trần Xuân Hiệp - MSSV: 2280618989.
