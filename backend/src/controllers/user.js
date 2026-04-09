@@ -11,11 +11,9 @@ exports.register = async (req, res) => {
         const [existing] = await pool.query('SELECT * FROM `user` WHERE username = ? OR email = ?', [username, email]);
         if (existing.length > 0) return res.status(400).json({ message: "Tên đăng nhập hoặc Email đã tồn tại!" });
 
-        // Lấy full_name tạo hồ sơ nhân viên
         const [empResult] = await pool.query('INSERT INTO `employee` (full_name) VALUES (?)', [full_name || username]);
         const newEmployeeId = empResult.insertId;
 
-        // Lưu mật khẩu plain text (không dùng bcrypt)
         await pool.query(
             'INSERT INTO `user` (username, email, password, role_id, employee_id) VALUES (?, ?, ?, 3, ?)',
             [username, email, password, newEmployeeId]
@@ -37,7 +35,6 @@ exports.login = async (req, res) => {
         if (users.length === 0) return res.status(401).json({ message: "Sai tài khoản hoặc mật khẩu" });
         const user = users[0];
 
-        // So sánh mật khẩu trực tiếp (không dùng bcrypt)
         if (password !== user.password) return res.status(401).json({ message: "Sai tài khoản hoặc mật khẩu" });
         if (!user.status) return res.status(403).json({ message: "Tài khoản bị vô hiệu hóa!" });
 
@@ -51,8 +48,6 @@ exports.login = async (req, res) => {
     }
 };
 
-// --- CÁC HÀM BỊ THIẾU ĐƯỢC THÊM LẠI Ở ĐÂY ---
-
 exports.changePassword = async (req, res) => {
     try {
         const { oldPassword, newPassword } = req.body;
@@ -61,10 +56,8 @@ exports.changePassword = async (req, res) => {
         const [users] = await pool.query('SELECT * FROM `user` WHERE id = ?', [userId]);
         const user = users[0];
 
-        // So sánh mật khẩu cũ (không dùng bcrypt)
         if (oldPassword !== user.password) return res.status(400).json({ message: "Mật khẩu cũ không đúng" });
 
-        // Cập nhật mật khẩu mới (không dùng bcrypt)
         await pool.query('UPDATE `user` SET password = ? WHERE id = ?', [newPassword, userId]);
 
         res.status(200).json({ message: "Đổi mật khẩu thành công" });

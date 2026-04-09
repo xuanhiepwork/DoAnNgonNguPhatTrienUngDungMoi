@@ -17,7 +17,7 @@ exports.getPayroll = async (req, res) => {
 exports.generatePayroll = async (req, res) => {
     const { month, year } = req.body;
     const baseSalary = 15000000;
-    const standardWorkDays = 22; // Tổng công chuẩn
+    const standardWorkDays = 22;
     const dailyWage = baseSalary / standardWorkDays;
 
     try {
@@ -30,14 +30,12 @@ exports.generatePayroll = async (req, res) => {
         if (employees.length === 0) return res.status(400).json({ message: `Đã tạo hết lương tháng ${month}/${year}` });
 
         for (let emp of employees) {
-            // 1. Đếm số ngày đi làm thực tế trong tháng
             const [attendance] = await pool.query(`
                 SELECT COUNT(*) as presentDays FROM attendance 
                 WHERE employee_id = ? AND MONTH(date) = ? AND YEAR(date) = ?
             `, [emp.id, month, year]);
             const presentDays = attendance[0].presentDays;
 
-            // 2. Đếm số ngày nghỉ phép ĐÃ DUYỆT (Giả sử 1 đơn = 1 ngày cho đơn giản đồ án)
             const [leaves] = await pool.query(`
                 SELECT COUNT(*) as leaveDays FROM leave_request 
                 WHERE employee_id = ? AND status = 'Approved' 
@@ -45,14 +43,10 @@ exports.generatePayroll = async (req, res) => {
             `, [emp.id, month, year]);
             const approvedLeaveDays = leaves[0].leaveDays;
 
-            // 3. Tính lương thực nhận (Tổng ngày công)
-            // Lương = (Ngày đi làm + Ngày phép) * Lương 1 ngày
             const totalValidDays = presentDays + approvedLeaveDays;
 
-            // Nếu đi làm lố 22 ngày thì chỉ tính max 22 ngày base (hoặc bạn có thể cho > 22 là Overtime)
             const finalDays = totalValidDays > standardWorkDays ? standardWorkDays : totalValidDays;
 
-            // Khoản phạt/trừ = Số ngày thiếu hụt so với chuẩn
             const missingDays = standardWorkDays - finalDays;
             const deductions = missingDays > 0 ? (missingDays * dailyWage) : 0;
 

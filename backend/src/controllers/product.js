@@ -10,26 +10,21 @@ exports.getAllProducts = async (req, res) => {
 
         const offset = (page - 1) * limit;
 
-        // Câu query cơ bản (chỉ lấy dữ liệu chưa xóa mềm)
         let query = `SELECT * FROM product WHERE is_deleted = FALSE`;
         const queryParams = [];
 
-        // tìm kiếm theo Title
         if (search) {
             query += ` AND title LIKE ?`;
             queryParams.push(`%${search}%`);
         }
 
-        // sắp xếp 
         const allowedSortColumns = ['id', 'title', 'price'];
         const safeSortBy = allowedSortColumns.includes(sortBy) ? sortBy : 'id';
         query += ` ORDER BY ${safeSortBy} ${sortOrder}`;
 
-        // phân trang
         query += ` LIMIT ? OFFSET ?`;
         queryParams.push(limit, offset);
 
-        // Đếm tổng số bản ghi để làm thanh chuyển trang
         let countQuery = `SELECT COUNT(*) as total FROM product WHERE is_deleted = FALSE`;
         const countParams = [];
         if (search) {
@@ -104,7 +99,6 @@ exports.updateProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        // Chỉ cập nhật is_deleted thành true thay vì xóa hoàn toàn
         const [result] = await pool.query(
             'UPDATE product SET is_deleted = TRUE WHERE id = ?',
             [id]

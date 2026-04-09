@@ -51,7 +51,7 @@ const Dashboard = () => {
         <Layout style={{ minHeight: '100vh' }}>
             <Sider theme="dark">
                 <div style={{ height: 32, margin: 16, background: 'rgba(255, 255, 255, 0.2)', color: 'white', textAlign: 'center', lineHeight: '32px', fontWeight: 'bold' }}>HRM SYSTEM</div>
-                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
+                <Menu theme="dark" defaultSelectedKeys={['home']} mode="inline">
                     <Menu.Item key="home" icon={<BankOutlined />}><Link to="/">Trang chủ</Link></Menu.Item>
                     <Menu.Item key="1" icon={<DesktopOutlined />}><Link to="/products">Tài sản / Thiết bị</Link></Menu.Item>
                     <Menu.Item key="2" icon={<TeamOutlined />}><Link to="/employees">Nhân sự</Link></Menu.Item>
@@ -69,7 +69,10 @@ const Dashboard = () => {
                     <div style={{ padding: 24, minHeight: 360, background: '#fff' }}>
                         {location.pathname === '/' ? (
                             <div>
-                                <h2 style={{ marginBottom: 24 }}>Xin chào, {user?.username}!</h2>
+                                {/* Thay đổi tiêu đề chào mừng tại đây */}
+                                <h2 style={{ marginBottom: 30, textAlign: 'center', fontWeight: 'bold', color: '#1890ff' }}>
+                                    CHÀO MỪNG BẠN ĐẾN VỚI HỆ THỐNG
+                                </h2>
 
                                 {user?.role === 'user' && (
                                     <Row gutter={16}>
@@ -91,8 +94,7 @@ const Dashboard = () => {
                                     </Row>
                                 )}
 
-                                {/* GIAO DIỆN THỐNG KÊ CHO ADMIN */}
-                                {user?.role === 'admin' && (
+                                {/* {user?.role === 'admin' && (
                                     <Row gutter={[16, 16]}>
                                         <Col span={6}>
                                             <Card bordered={false} style={{ background: '#e6f7ff' }}>
@@ -115,7 +117,7 @@ const Dashboard = () => {
                                             </Card>
                                         </Col>
                                     </Row>
-                                )}
+                                )} */}
                             </div>
                         ) : (
                             <Outlet />
