@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Button, Card, Row, Col, Statistic } from 'antd';
 import { useNavigate, Outlet, Link, useLocation } from 'react-router-dom';
-import { DesktopOutlined, TeamOutlined, LogoutOutlined, FormOutlined, BellOutlined, DollarOutlined, FieldTimeOutlined, BankOutlined, WalletOutlined } from '@ant-design/icons';
+import {
+    DesktopOutlined, TeamOutlined, LogoutOutlined, FormOutlined,
+    BellOutlined, DollarOutlined, FieldTimeOutlined, BankOutlined,
+    WalletOutlined, LaptopOutlined, CheckCircleOutlined
+} from '@ant-design/icons';
 import axiosClient from '../api/axiosClient';
 
 const { Header, Content, Sider } = Layout;
 
-// Hàm giải mã Token an toàn
 const decodeToken = (token) => {
     try {
         const base64Url = token.split('.')[1];
@@ -18,7 +21,9 @@ const decodeToken = (token) => {
 const Dashboard = () => {
     const navigate = useNavigate();
     const location = useLocation();
+
     const [stats, setStats] = useState({ workingDays: 0, pendingLeaves: 0, latestSalary: 0 });
+    const [adminStats, setAdminStats] = useState({ totalEmployees: 0, totalProducts: 0, pendingLeaves: 0, attendanceToday: 0 });
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -29,12 +34,18 @@ const Dashboard = () => {
     const user = token ? decodeToken(token) : { role: 'user' };
 
     useEffect(() => {
-        if (user?.role === 'user' && location.pathname === '/') {
-            axiosClient.get('/dashboard/my-stats')
-                .then(res => setStats(res))
-                .catch(e => console.log("Lỗi tải thông kê"));
+        if (location.pathname === '/') {
+            if (user?.role === 'user') {
+                axiosClient.get('/dashboard/my-stats')
+                    .then(res => setStats(res))
+                    .catch(e => console.log("Lỗi tải thống kê nhân viên"));
+            } else if (user?.role === 'admin') {
+                axiosClient.get('/dashboard/admin-stats')
+                    .then(res => setAdminStats(res))
+                    .catch(e => console.log("Lỗi tải thống kê admin"));
+            }
         }
-    }, [location.pathname]);
+    }, [location.pathname, user?.role]);
 
     return (
         <Layout style={{ minHeight: '100vh' }}>
@@ -58,30 +69,52 @@ const Dashboard = () => {
                     <div style={{ padding: 24, minHeight: 360, background: '#fff' }}>
                         {location.pathname === '/' ? (
                             <div>
-                                <h2 style={{ marginBottom: 20 }}>Xin chào, {user?.username}!</h2>
-                                {user?.role === 'user' ? (
+                                <h2 style={{ marginBottom: 24 }}>Xin chào, {user?.username}!</h2>
+
+                                {user?.role === 'user' && (
                                     <Row gutter={16}>
                                         <Col span={8}>
                                             <Card bordered={false} style={{ background: '#e6f7ff' }}>
-                                                <Statistic title="Ngày công tháng này" value={stats.workingDays} suffix="/ 22" prefix={<FieldTimeOutlined />} />
+                                                <Statistic title="Ngày công tháng này" value={stats.workingDays} suffix="/ 22" prefix={<FieldTimeOutlined />} valueStyle={{ color: '#1890ff' }} />
+                                            </Card>
+                                        </Col>
+                                        <Col span={8}>
+                                            <Card bordered={false} style={{ background: '#fffb8f' }}>
+                                                <Statistic title="Đơn nghỉ phép chờ duyệt" value={stats.pendingLeaves} prefix={<FormOutlined />} valueStyle={{ color: '#faad14' }} />
                                             </Card>
                                         </Col>
                                         <Col span={8}>
                                             <Card bordered={false} style={{ background: '#f6ffed' }}>
-                                                <Statistic title="Đơn nghỉ phép chờ duyệt" value={stats.pendingLeaves} prefix={<FormOutlined />} />
-                                            </Card>
-                                        </Col>
-                                        <Col span={8}>
-                                            <Card bordered={false} style={{ background: '#fff7e6' }}>
-                                                <Statistic title="Lương thực nhận gần nhất" value={stats.latestSalary} suffix="VNĐ" prefix={<WalletOutlined />} />
+                                                <Statistic title="Lương thực nhận gần nhất" value={stats.latestSalary} suffix="VNĐ" prefix={<WalletOutlined />} valueStyle={{ color: '#52c41a' }} />
                                             </Card>
                                         </Col>
                                     </Row>
-                                ) : (
-                                    <div style={{ padding: 40, textAlign: 'center' }}>
-                                        <BankOutlined style={{ fontSize: 64, color: '#08c' }} />
-                                        <h3>Chào mừng Admin quay trở lại hệ thống quản trị!</h3>
-                                    </div>
+                                )}
+
+                                {/* GIAO DIỆN THỐNG KÊ CHO ADMIN */}
+                                {user?.role === 'admin' && (
+                                    <Row gutter={[16, 16]}>
+                                        <Col span={6}>
+                                            <Card bordered={false} style={{ background: '#e6f7ff' }}>
+                                                <Statistic title="Tổng Nhân sự" value={adminStats.totalEmployees} prefix={<TeamOutlined />} valueStyle={{ color: '#1890ff' }} />
+                                            </Card>
+                                        </Col>
+                                        <Col span={6}>
+                                            <Card bordered={false} style={{ background: '#f6ffed' }}>
+                                                <Statistic title="Đi làm hôm nay" value={adminStats.attendanceToday} prefix={<CheckCircleOutlined />} valueStyle={{ color: '#52c41a' }} />
+                                            </Card>
+                                        </Col>
+                                        <Col span={6}>
+                                            <Card bordered={false} style={{ background: '#fffb8f' }}>
+                                                <Statistic title="Đơn phép cần duyệt" value={adminStats.pendingLeaves} prefix={<BellOutlined />} valueStyle={{ color: '#faad14' }} />
+                                            </Card>
+                                        </Col>
+                                        <Col span={6}>
+                                            <Card bordered={false} style={{ background: '#fff0f6' }}>
+                                                <Statistic title="Tổng Tài sản/Thiết bị" value={adminStats.totalProducts} prefix={<LaptopOutlined />} valueStyle={{ color: '#eb2f96' }} />
+                                            </Card>
+                                        </Col>
+                                    </Row>
                                 )}
                             </div>
                         ) : (

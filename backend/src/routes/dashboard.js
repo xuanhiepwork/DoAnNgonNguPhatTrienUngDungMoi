@@ -6,13 +6,8 @@ const { verifyToken } = require('../middlewares/is-auth');
 router.get('/my-stats', verifyToken, async (req, res) => {
     const empId = req.user.employee_id;
     try {
-        // 1. Đếm số ngày đi làm tháng hiện tại
         const [att] = await pool.query('SELECT COUNT(*) as days FROM attendance WHERE employee_id = ? AND MONTH(date) = MONTH(CURDATE())', [empId]);
-
-        // 2. Đếm số đơn nghỉ phép chờ duyệt
         const [leaves] = await pool.query('SELECT COUNT(*) as pending FROM leave_request WHERE employee_id = ? AND status="Pending"', [empId]);
-
-        // 3. Tính tổng thực nhận của tháng gần nhất
         const [payroll] = await pool.query('SELECT net_salary FROM payroll WHERE employee_id = ? ORDER BY year DESC, month DESC LIMIT 1', [empId]);
 
         res.json({
@@ -22,4 +17,21 @@ router.get('/my-stats', verifyToken, async (req, res) => {
         });
     } catch (error) { res.status(500).json({ error: error.message }); }
 });
+
+router.get('/admin-stats', verifyToken, async (req, res) => {
+    try {
+        const [emp] = await pool.query('SELECT COUNT(*) as total FROM employee WHERE is_deleted = 0');
+        const [prod] = await pool.query('SELECT COUNT(*) as total FROM product WHERE is_deleted = 0');
+        const [leave] = await pool.query('SELECT COUNT(*) as total FROM leave_request WHERE status = "Pending"');
+        const [att] = await pool.query('SELECT COUNT(DISTINCT employee_id) as total FROM attendance WHERE date = CURDATE()');
+
+        res.json({
+            totalEmployees: emp[0].total,
+            totalProducts: prod[0].total,
+            pendingLeaves: leave[0].total,
+            attendanceToday: att[0].total
+        });
+    } catch (error) { res.status(500).json({ error: error.message }); }
+});
+
 module.exports = router;

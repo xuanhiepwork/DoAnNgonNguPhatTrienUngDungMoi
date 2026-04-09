@@ -27,3 +27,17 @@ exports.updateStatus = async (req, res) => {
         res.status(200).json({ message: `Thành công` });
     } catch (error) { res.status(500).json({ error: error.message }); }
 };
+
+exports.getAllRequests = async (req, res) => {
+    try {
+        const [rows] = await pool.query(`
+            SELECT l.*, e.full_name 
+            FROM leave_request l 
+            JOIN employee e ON l.employee_id = e.id 
+            ORDER BY l.id DESC
+        `);
+        res.status(200).json(rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
