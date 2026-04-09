@@ -10,7 +10,6 @@ import LeaveRequest from './pages/LeaveRequest';
 import Payroll from './pages/Payroll';
 import Attendance from './pages/Attendance';
 
-// Hàm giải mã Token an toàn (Chống Crash Base64Url)
 const decodeToken = (token) => {
     try {
         const base64Url = token.split('.')[1];
@@ -30,7 +29,6 @@ const RoleBasedRoute = ({ children, allowedRoles }) => {
 
     const user = decodeToken(token);
 
-    // Nếu token bị lỗi, xóa token và bắt đăng nhập lại
     if (!user) {
         localStorage.removeItem('token');
         return <Navigate to="/login" replace />;

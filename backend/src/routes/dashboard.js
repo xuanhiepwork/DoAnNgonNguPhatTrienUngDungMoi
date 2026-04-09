@@ -15,7 +15,9 @@ router.get('/my-stats', verifyToken, async (req, res) => {
             pendingLeaves: leaves[0].pending,
             latestSalary: payroll.length > 0 ? payroll[0].net_salary : 0
         });
-    } catch (error) { res.status(500).json({ error: error.message }); }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 router.get('/admin-stats', verifyToken, async (req, res) => {
@@ -31,7 +33,9 @@ router.get('/admin-stats', verifyToken, async (req, res) => {
             pendingLeaves: leave[0].total,
             attendanceToday: att[0].total
         });
-    } catch (error) { res.status(500).json({ error: error.message }); }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 module.exports = router;

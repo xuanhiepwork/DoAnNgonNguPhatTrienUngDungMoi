@@ -63,7 +63,7 @@ const Attendance = () => {
                 </Card>
             )}
 
-            <Card title={<span><FieldTimeOutlined /> LICH SU CHAM CONG</span>}>
+            <Card title={<span><FieldTimeOutlined /> LỊCH SỬ CHẤM CÔNG</span>}>
                 <Table columns={columns} dataSource={data} rowKey="id" loading={loading} />
             </Card>
         </div>

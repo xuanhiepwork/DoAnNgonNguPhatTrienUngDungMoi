@@ -11,7 +11,9 @@ exports.getPayroll = async (req, res) => {
             ORDER BY p.year DESC, p.month DESC
         `);
         res.status(200).json(rows);
-    } catch (error) { res.status(500).json({ error: error.message }); }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
 exports.generatePayroll = async (req, res) => {
@@ -27,7 +29,8 @@ exports.generatePayroll = async (req, res) => {
             AND id NOT IN (SELECT employee_id FROM payroll WHERE month = ? AND year = ?)
         `, [month, year]);
 
-        if (employees.length === 0) return res.status(400).json({ message: `Đã tạo hết lương tháng ${month}/${year}` });
+        if (employees.length === 0)
+            return res.status(400).json({ message: `Đã tạo hết lương tháng ${month}/${year}` });
 
         for (let emp of employees) {
             const [attendance] = await pool.query(`
@@ -67,5 +70,7 @@ exports.paySalary = async (req, res) => {
     try {
         await pool.query('UPDATE payroll SET status = "Paid" WHERE id = ?', [id]);
         res.status(200).json({ message: "Thanh toán thành công!" });
-    } catch (error) { res.status(500).json({ error: error.message }); }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };

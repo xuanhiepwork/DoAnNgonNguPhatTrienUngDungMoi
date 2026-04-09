@@ -11,12 +11,13 @@ exports.createRequest = async (req, res) => {
             'INSERT INTO leave_request (employee_id, start_date, end_date, reason) VALUES (?, ?, ?, ?)',
             [employee_id, start_date, end_date, reason || 'Không có lý do']
         );
-
         if (req.io) {
             req.io.emit('new_leave_request', { message: `Có đơn xin nghỉ phép mới!` });
         }
         res.status(201).json({ message: "Gửi đơn thành công!" });
-    } catch (error) { res.status(500).json({ error: error.message }); }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
 exports.updateStatus = async (req, res) => {
@@ -25,7 +26,9 @@ exports.updateStatus = async (req, res) => {
     try {
         await pool.query('UPDATE leave_request SET status = ? WHERE id = ?', [status, id]);
         res.status(200).json({ message: `Thành công` });
-    } catch (error) { res.status(500).json({ error: error.message }); }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
 exports.getAllRequests = async (req, res) => {

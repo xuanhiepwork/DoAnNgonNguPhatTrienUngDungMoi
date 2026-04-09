@@ -14,7 +14,13 @@ const ProductManagement = () => {
     const [form] = Form.useForm();
 
     const [tableParams, setTableParams] = useState({
-        pagination: { current: 1, pageSize: 5, total: 0, showSizeChanger: true, pageSizeOptions: ['5', '10', '20'] },
+        pagination: {
+            current: 1,
+            pageSize: 5,
+            total: 0,
+            showSizeChanger: true,
+            pageSizeOptions: ['5', '10', '20']
+        },
         sortField: 'id',
         sortOrder: 'ASC'
     });
@@ -107,7 +113,6 @@ const ProductManagement = () => {
 
     return (
         <div style={{ padding: '20px' }}>
-            {/* 4. Chức năng Thống kê nhanh */}
             <Row gutter={16} style={{ marginBottom: 24 }}>
                 <Col span={12}>
                     <Card bordered={false} style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>

@@ -5,11 +5,12 @@ exports.verifyToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
-    if (!token) return res.status(401).json({ message: "Bạn chưa đăng nhập! Vui lòng cung cấp Token." });
+    if (!token)
+        return res.status(401).json({ message: "Bạn chưa đăng nhập! Vui lòng cung cấp Token." });
 
     jwt.verify(token, JWT_SECRET, (err, decoded) => {
-        if (err) return res.status(403).json({ message: "Token không hợp lệ hoặc đã hết hạn." });
-
+        if (err)
+            return res.status(403).json({ message: "Token không hợp lệ hoặc đã hết hạn." });
         req.user = decoded;
         next();
     });
