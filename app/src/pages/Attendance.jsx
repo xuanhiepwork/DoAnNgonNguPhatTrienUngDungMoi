@@ -5,7 +5,6 @@ import axiosClient from '../api/axiosClient';
 
 const { Title } = Typography;
 
-// Hàm giải mã Token an toàn
 const decodeToken = (token) => {
     try {
         const base64Url = token.split('.')[1];

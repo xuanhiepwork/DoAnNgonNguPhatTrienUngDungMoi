@@ -69,7 +69,6 @@ const Dashboard = () => {
                     <div style={{ padding: 24, minHeight: 360, background: '#fff' }}>
                         {location.pathname === '/' ? (
                             <div>
-                                {/* Thay đổi tiêu đề chào mừng tại đây */}
                                 <h2 style={{ marginBottom: 30, textAlign: 'center', fontWeight: 'bold', color: '#1890ff' }}>
                                     CHÀO MỪNG BẠN ĐẾN VỚI HỆ THỐNG
                                 </h2>

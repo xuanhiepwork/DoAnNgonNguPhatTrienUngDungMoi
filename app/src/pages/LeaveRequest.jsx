@@ -2,7 +2,6 @@ import React from 'react';
 import { Form, DatePicker, Input, Button, Card, message } from 'antd';
 import axiosClient from '../api/axiosClient';
 
-// Hàm giải mã Token an toàn
 const decodeToken = (token) => {
     try {
         const base64Url = token.split('.')[1];
@@ -39,9 +38,9 @@ const LeaveRequest = () => {
                     <DatePicker.RangePicker style={{ width: '100%' }} />
                 </Form.Item>
                 <Form.Item name="reason" label="Lý do nghỉ" rules={[{ required: true }]}>
-                    <Input.TextArea rows={4} placeholder="Ghi rõ lý do (VD: Đi cưới người yêu cũ...)" />
+                    <Input.TextArea rows={4} placeholder="Ghi rõ lý do (Đi cưới người yêu cũ=(( huhu))...)" />
                 </Form.Item>
-                <Button type="primary" htmlType="submit" block>Gửi đơn ngay</Button>
+                <Button type="primary" htmlType="submit" block>Gửi</Button>
             </Form>
         </Card>
     );

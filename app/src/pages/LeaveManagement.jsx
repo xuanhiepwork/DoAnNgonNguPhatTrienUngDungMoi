@@ -4,8 +4,7 @@ import { CheckOutlined, CloseOutlined, BellOutlined } from '@ant-design/icons';
 import { io } from 'socket.io-client';
 import axiosClient from '../api/axiosClient';
 
-// Kết nối tới Server Backend
-const socket = io('http://localhost:8080');
+const socket = io(process.env.SOCKET_IO_SERVER);
 
 const LeaveManagement = () => {
     const [requests, setRequests] = useState([]);
@@ -14,7 +13,7 @@ const LeaveManagement = () => {
     const fetchRequests = async () => {
         setLoading(true);
         try {
-            const data = await axiosClient.get('/leave/all'); // Bạn cần tạo API này ở backend
+            const data = await axiosClient.get('/leave/all');
             setRequests(data);
         } catch (error) { message.error('Lỗi tải danh sách nghỉ phép'); }
         setLoading(false);
@@ -22,15 +21,13 @@ const LeaveManagement = () => {
 
     useEffect(() => {
         fetchRequests();
-
-        // LẮNG NGHE THÔNG BÁO REAL-TIME
         socket.on('new_leave_request', (data) => {
             notification.open({
                 message: 'CÓ ĐƠN NGHỈ PHÉP MỚI',
                 description: data.message,
                 icon: <BellOutlined style={{ color: '#108ee9' }} />,
             });
-            fetchRequests(); // Tự động load lại bảng khi có đơn mới
+            fetchRequests();
         });
 
         return () => socket.off('new_leave_request');

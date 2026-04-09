@@ -39,7 +39,6 @@ const ProductManagement = () => {
 
     useEffect(() => { fetchData(); }, [tableParams.pagination.current, tableParams.pagination.pageSize, tableParams.sortField, tableParams.sortOrder, searchText]);
 
-    // 1. Chức năng Thêm/Sửa
     const handleAddEdit = async (values) => {
         try {
             if (editingProduct) {
@@ -55,7 +54,6 @@ const ProductManagement = () => {
         } catch (error) { message.error('Thao tác thất bại!'); }
     };
 
-    // 2. Chức năng Xóa (Soft Delete)
     const handleDelete = async (id) => {
         try {
             await axiosClient.delete(`/products/${id}`);
@@ -64,7 +62,6 @@ const ProductManagement = () => {
         } catch (error) { message.error('Không thể xóa thiết bị này!'); }
     };
 
-    // 3. Chức năng Xuất Excel
     const exportToExcel = async () => {
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Danh sách thiết bị');

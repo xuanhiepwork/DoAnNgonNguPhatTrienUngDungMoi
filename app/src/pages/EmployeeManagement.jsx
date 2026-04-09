@@ -3,7 +3,6 @@ import { Table, Button, Card, Avatar, Tag, Space, message, Modal, Form, Input, S
 import { UserAddOutlined, UploadOutlined, TeamOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import axiosClient from '../api/axiosClient';
 
-// Hàm giải mã Token an toàn
 const decodeToken = (token) => {
     try {
         const base64Url = token.split('.')[1];
@@ -134,7 +133,7 @@ const EmployeeManagement = () => {
                     </Form.Item>
                     <Form.Item name="avatar" label="Anh the nhan vien">
                         <Upload beforeUpload={() => false} listType="picture" maxCount={1}>
-                            <Button icon={<UploadOutlined />}>Chon anh dai dien</Button>
+                            <Button icon={<UploadOutlined />}>Chọn ảnh đại diện</Button>
                         </Upload>
                     </Form.Item>
                 </Form>
