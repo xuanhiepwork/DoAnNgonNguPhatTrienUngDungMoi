@@ -1,3 +1,4 @@
+
 const { pool } = require('../config/db');
 
 exports.getAllEmployees = async (req, res) => {

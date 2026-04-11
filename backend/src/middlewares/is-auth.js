@@ -1,3 +1,4 @@
+
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = 'chuoi_bao_mat_hrm_cua_ban';
 

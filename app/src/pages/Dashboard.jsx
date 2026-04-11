@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Button, Card, Row, Col, Statistic } from 'antd';
 import { useNavigate, Outlet, Link, useLocation } from 'react-router-dom';
+
 import {
     DesktopOutlined, TeamOutlined, LogoutOutlined, FormOutlined,
     BellOutlined, DollarOutlined, FieldTimeOutlined, BankOutlined,
@@ -32,6 +33,16 @@ const Dashboard = () => {
 
     const token = localStorage.getItem('token');
     const user = token ? decodeToken(token) : { role: 'user' };
+    const selectedMenuKey = (() => {
+        if (location.pathname === '/') return 'home';
+        if (location.pathname.startsWith('/products')) return '1';
+        if (location.pathname.startsWith('/employees')) return '2';
+        if (location.pathname.startsWith('/leave-request')) return '3';
+        if (location.pathname.startsWith('/leave-management')) return '4';
+        if (location.pathname.startsWith('/payroll')) return '5';
+        if (location.pathname.startsWith('/attendance')) return '6';
+        return 'home';
+    })();
 
     useEffect(() => {
         if (location.pathname === '/') {
@@ -51,7 +62,7 @@ const Dashboard = () => {
         <Layout style={{ minHeight: '100vh' }}>
             <Sider theme="dark">
                 <div style={{ height: 32, margin: 16, background: 'rgba(255, 255, 255, 0.2)', color: 'white', textAlign: 'center', lineHeight: '32px', fontWeight: 'bold' }}>HRM SYSTEM</div>
-                <Menu theme="dark" defaultSelectedKeys={['home']} mode="inline">
+                <Menu theme="dark" selectedKeys={[selectedMenuKey]} mode="inline">
                     <Menu.Item key="home" icon={<BankOutlined />}><Link to="/">Trang chủ</Link></Menu.Item>
                     <Menu.Item key="1" icon={<DesktopOutlined />}><Link to="/products">Tài sản / Thiết bị</Link></Menu.Item>
                     <Menu.Item key="2" icon={<TeamOutlined />}><Link to="/employees">Nhân sự</Link></Menu.Item>
@@ -93,30 +104,50 @@ const Dashboard = () => {
                                     </Row>
                                 )}
 
-                                {/* {user?.role === 'admin' && (
+                                {user?.role === 'admin' && (
                                     <Row gutter={[16, 16]}>
                                         <Col span={6}>
                                             <Card bordered={false} style={{ background: '#e6f7ff' }}>
-                                                <Statistic title="Tổng Nhân sự" value={adminStats.totalEmployees} prefix={<TeamOutlined />} valueStyle={{ color: '#1890ff' }} />
+                                                <Statistic
+                                                    title="Tổng Nhân sự"
+                                                    value={adminStats.totalEmployees}
+                                                    prefix={<TeamOutlined />}
+                                                    valueStyle={{ color: '#1890ff' }}
+                                                />
                                             </Card>
                                         </Col>
                                         <Col span={6}>
                                             <Card bordered={false} style={{ background: '#f6ffed' }}>
-                                                <Statistic title="Đi làm hôm nay" value={adminStats.attendanceToday} prefix={<CheckCircleOutlined />} valueStyle={{ color: '#52c41a' }} />
+                                                <Statistic
+                                                    title="Đi làm hôm nay"
+                                                    value={adminStats.attendanceToday}
+                                                    prefix={<CheckCircleOutlined />}
+                                                    valueStyle={{ color: '#52c41a' }}
+                                                />
                                             </Card>
                                         </Col>
                                         <Col span={6}>
                                             <Card bordered={false} style={{ background: '#fffb8f' }}>
-                                                <Statistic title="Đơn phép cần duyệt" value={adminStats.pendingLeaves} prefix={<BellOutlined />} valueStyle={{ color: '#faad14' }} />
+                                                <Statistic
+                                                    title="Đơn phép cần duyệt"
+                                                    value={adminStats.pendingLeaves}
+                                                    prefix={<BellOutlined />}
+                                                    valueStyle={{ color: '#faad14' }}
+                                                />
                                             </Card>
                                         </Col>
                                         <Col span={6}>
                                             <Card bordered={false} style={{ background: '#fff0f6' }}>
-                                                <Statistic title="Tổng Tài sản/Thiết bị" value={adminStats.totalProducts} prefix={<LaptopOutlined />} valueStyle={{ color: '#eb2f96' }} />
+                                                <Statistic
+                                                    title="Tổng Tài sản/Thiết bị"
+                                                    value={adminStats.totalProducts}
+                                                    prefix={<LaptopOutlined />}
+                                                    valueStyle={{ color: '#eb2f96' }}
+                                                />
                                             </Card>
                                         </Col>
                                     </Row>
-                                )} */}
+                                )}
                             </div>
                         ) : (
                             <Outlet />

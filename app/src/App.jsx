@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
@@ -49,18 +50,18 @@ function App() {
                 <Route path="/register" element={<Register />} />
 
                 <Route path="/" element={<RoleBasedRoute><Dashboard /></RoleBasedRoute>}>
-                    <Route index element={<h2>Chào mừng đến với Hệ thống Quản lý</h2>} />
                     <Route path="products" element={<ProductManagement />} />
                     <Route path="employees" element={<EmployeeManagement />} />
                     <Route path="leave-request" element={<LeaveRequest />} />
                     <Route path="attendance" element={<Attendance />} />
-
-                    <Route path="leave-management" element={
-                        <RoleBasedRoute allowedRoles={['admin']}><LeaveManagement /></RoleBasedRoute>
-                    } />
-                    <Route path="payroll" element={
-                        <RoleBasedRoute allowedRoles={['admin']}><Payroll /></RoleBasedRoute>
-                    } />
+                    <Route
+                        path="leave-management"
+                        element={<RoleBasedRoute allowedRoles={['admin']}><LeaveManagement /></RoleBasedRoute>}
+                    />
+                    <Route
+                        path="payroll"
+                        element={<RoleBasedRoute allowedRoles={['admin']}><Payroll /></RoleBasedRoute>}
+                    />
                 </Route>
 
                 <Route path="*" element={<Navigate to="/login" replace />} />
@@ -70,3 +71,4 @@ function App() {
 }
 
 export default App;
+

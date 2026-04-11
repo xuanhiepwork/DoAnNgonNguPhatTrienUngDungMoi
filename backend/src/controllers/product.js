@@ -1,3 +1,4 @@
+
 const { pool } = require('../config/db');
 
 exports.getAllProducts = async (req, res) => {

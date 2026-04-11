@@ -1,10 +1,12 @@
+
 import React, { useState, useEffect } from 'react';
 import { Table, Tag, Space, Button, Card, message, notification } from 'antd';
 import { CheckOutlined, CloseOutlined, BellOutlined } from '@ant-design/icons';
 import { io } from 'socket.io-client';
 import axiosClient from '../api/axiosClient';
 
-const socket = io(process.env.SOCKET_IO_SERVER);
+// const socket = io(process.env.SOCKET_IO_SERVER);
+const socket = io('http://localhost:8080');
 
 const LeaveManagement = () => {
     const [requests, setRequests] = useState([]);
